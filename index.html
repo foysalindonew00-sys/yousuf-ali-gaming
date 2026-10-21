@@ -156,14 +156,47 @@ input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #35415b
 </main>
 <footer><div class="wrap footer-row"><div><strong style="color:#e8edfa">YOUSUF ALI GAMING</strong><br>Gaming top-up shop • Bangladesh</div><div>Fan-made independent storefront. Not affiliated with Garena.<br>© <span id="year"></span> YOUSUF ALI Gaming</div></div></footer>
 <a class="btn btn-wa float-wa" href="https://wa.me/8801323065870?text=Hello%2C%20I%20have%20a%20question%20about%20a%20top-up." target="_blank" rel="noopener">☏ WhatsApp</a>
+
 <dialog id="orderDialog">
-  <form id="orderForm" method="dialog">
-    <h3>Complete your order</h3><p id="chosenPackage">Selected package</p>
-    <label for="uid">Free Fire Player UID</label><input id="uid" name="uid" inputmode="numeric" placeholder="Enter your UID" required maxlength="24">
-    <label for="server">Server</label><select id="server" name="server"><option>Bangladesh</option><option>Indonesia</option><option>Thailand</option><option>Other / confirm with seller</option></select>
-    <label for="contactChoice">Send order to</label><select id="contactChoice" name="contactChoice"><option value="8801323065870">WhatsApp 1 — 01323065870</option><option value="8801884356095">WhatsApp 2 — 01884356095</option></select>
-    <div class="modal-actions"><button type="button" class="btn btn-ghost" id="cancelOrder">Cancel</button><button type="submit" class="btn btn-wa">Continue to WhatsApp ↗</button></div>
-    <div class="smallprint">Do not enter passwords, OTPs or recovery codes. Your order details are added to a WhatsApp message; this website does not store them.</div>
+  <form id="orderForm">
+    <h3>Complete your order</h3>
+    <p id="chosenPackage">Selected package</p>
+
+    <label for="uid">Free Fire Player UID</label>
+    <input id="uid" name="uid" inputmode="numeric"
+      placeholder="Enter your UID" required maxlength="24">
+
+    <label for="server">Server</label>
+    <select id="server" name="server" required>
+      <option>Bangladesh</option>
+      <option>Indonesia</option>
+      <option>Thailand</option>
+      <option>Other</option>
+    </select>
+
+    <label for="contactNumber">Your Contact Number</label>
+    <input id="contactNumber" name="contactNumber"
+      type="tel" placeholder="01XXXXXXXXX" required maxlength="15">
+
+    <label for="paymentMethod">Payment Method</label>
+    <select id="paymentMethod" name="paymentMethod" required>
+      <option value="">Choose payment method</option>
+      <option value="bKash">bKash</option>
+      <option value="Nagad">Nagad</option>
+      <option value="Rocket">Rocket</option>
+    </select>
+    <p>Payment number: <strong>01403572238</strong></p>
+    <p>সঠিক পরিমাণ পাঠানোর পর TrxID দাও। PIN বা OTP দেবে না।</p>
+    <label for="transactionId">Transaction ID (TrxID)</label>
+    <input id="transactionId" name="transactionId"
+      placeholder="Enter TrxID" required maxlength="100">
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost"
+        id="cancelOrder">Cancel</button>
+      <button type="submit" class="btn btn-primary">
+        Submit Order
+      </button>
+    </div>
   </form>
 </dialog>
 <script>
