@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YOUSUF ALI Gaming | Admin</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #0b1020;
+      color: #eef3ff;
+      font-family: Arial, sans-serif;
+    }
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+    }
+    .panel {
+      background: #151e33;
+      border: 1px solid #2b3956;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    h1 { color: #62c7ff; }
+    input, button, select {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 7px 0;
+      border-radius: 8px;
+      border: 1px solid #445472;
+      font-size: 15px;
+    }
+    button {
+      background: #1688e8;
+      color: white;
+      border: 0;
+      font-weight: bold;
+    }
+    .secondary { background: #34425c; }
+    .order {
+      background: #0e1729;
+      padding: 14px;
+      border-radius: 9px;
+      margin: 12px 0;
+      overflow-wrap: anywhere;
+    }
+    .muted { color: #b6c4db; }
+    #dashboard { display: none; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>YOUSUF ALI GAMING</h1>
+  <p class="muted">Admin Order Dashboard</p>
+
+  <section class="panel" id="login">
+    <h2>Admin Login</h2>
+    <form id="loginForm">
+      <input id="email" type="email"
+        placeholder="Admin email" required>
+      <input id="password" type="password"
+        placeholder="Admin password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p id="message" role="status"></p>
+  </section>
+
+  <section class="panel" id="dashboard">
+    <h2>Orders</h2>
+    <button id="refresh" type="button">Refresh Orders</button>
+    <button id="logout" class="secondary" type="button">
+      Logout
+    </button>
+    <p id="orderMessage" role="status"></p>
+    <div id="orders"></div>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
+  authDomain: "yousuf-ali-gaming.firebaseapp.com",
+  projectId: "yousuf-ali-gaming",
+  storageBucket: "yousuf-ali-gaming.firebasestorage.app",
+  messagingSenderId: "736038389268",
+  appId: "1:736038389268:web:b717a07cb43076bd928901",
+  measurementId: "G-KR3L6WSZ3X"
+};
+
+const ADMIN_UID = "gIsJxXOyGKhUhf6ontux2zJnF9N2";
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const loginBox = document.getElementById("login");
+const dashboard = document.getElementById("dashboard");
+const message = document.getElementById("message");
+const orderMessage = document.getElementById("orderMessage");
+const ordersBox = document.getElementById("orders");
+
+document.getElementById("loginForm").addEventListener(
+  "submit", async function(event) {
+    event.preventDefault();
+    message.textContent = "Signing in...";
+
+    try {
+      const result = await auth.signInWithEmailAndPassword(
+        document.getElementById("email").value.trim(),
+        document.getElementById("password").value
+      );
+
+      if (result.user.uid !== ADMIN_UID) {
+        await auth.signOut();
+        message.textContent = "Access denied: not the admin.";
+        return;
+      }
+
+      message.textContent = "Login successful.";
+    } catch (error) {
+      message.textContent = "Login failed. Check your email and password.";
+    }
+  }
+);
+
+auth.onAuthStateChanged(async function(user) {
+  if (user && user.uid === ADMIN_UID) {
+    loginBox.style.display = "none";
+    dashboard.style.display = "block";
+    await loadOrders();
+  } else {
+    loginBox.style.display = "block";
+    dashboard.style.display = "none";
+  }
+});
+
+async function loadOrders() {
+  ordersBox.replaceChildren();
+  orderMessage.textContent = "Loading orders...";
+
+  try {
+    const snapshot = await db.collection("orders")
+      .orderBy("createdAt", "desc").get();
+
+    if (snapshot.empty) {
+      orderMessage.textContent = "No orders found yet.";
+      return;
+    }
+
+    orderMessage.textContent = snapshot.size + " order(s)";
+
+    snapshot.forEach(function(doc) {
+      const data = doc.data();
+      const card = document.createElement("article");
+      card.className = "order";
+
+      function addText(label, value) {
+        const p = document.createElement("p");
+        p.textContent = label + ": " +
+          (value == null ? "Not provided" : String(value));
+        card.appendChild(p);
+      }
+
+      addText("Order ID", doc.id);
+      addText("Player UID", data.uid);
+      addText("Package", data.package);
+      addText("Server", data.server);
+      addText("Contact", data.contact);
+      addText("Total", data.total);
+      addText("Status", data.status || "Pending");
+
+      const select = document.createElement("select");
+
+      ["Pending", "Processing", "Completed"].forEach(
+        function(status) {
+          const option = document.createElement("option");
+          option.value = status;
+          option.textContent = status;
+          if ((data.status || "Pending") === status) {
+            option.selected = true;
+          }
+          select.appendChild(option);
+        }
+      );
+
+      const save = document.createElement("button");
+      save.textContent = "Update Status";
+
+      save.addEventListener("click", async function() {
+        save.disabled = true;
+        try {
+          await db.collection("orders").doc(doc.id).update({
+            status: select.value
+          });
+          orderMessage.textContent = "Status updated.";
+          await loadOrders();
+        } catch (error) {
+          orderMessage.textContent =
+            "Update failed. Check Firestore Rules.";
+          save.disabled = false;
+        }
+      });
+
+      card.appendChild(select);
+      card.appendChild(save);
+      ordersBox.appendChild(card);
+    });
+  } catch (error) {
+    orderMessage.textContent =
+      "Could not load orders. Firestore access may be blocked.";
+  }
+}
+
+document.getElementById("refresh").addEventListener(
+  "click", loadOrders
+);
+
+document.getElementById("logout").addEventListener(
+  "click", async function() {
+    await auth.signOut();
+  }
+);
+</script>
+</body>
+</html>
