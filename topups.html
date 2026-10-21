@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <title>Recent Top-Ups | YOUSUF ALI Gaming</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0d1b2e;
+      --panel-2: #12243b;
+      --text: #eef6ff;
+      --muted: #9db0c8;
+      --accent: #27d8ff;
+      --accent-2: #6877ff;
+      --border: rgba(148, 190, 230, .17);
+      --success: #2bd67b;
+      --pending: #ffc857;
+      --failed: #ff6577;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(ellipse at top left, rgba(39,216,255,.13), transparent 36rem),
+        radial-gradient(ellipse at top right, rgba(104,119,255,.13), transparent 30rem),
+        var(--bg);
+    }
+    a { color: inherit; }
+    .wrap { width: min(1050px, calc(100% - 32px)); margin: 0 auto; }
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(7,17,31,.82);
+      backdrop-filter: blur(12px);
+    }
+    .nav {
+      min-height: 76px; display: flex; align-items: center;
+      justify-content: space-between; gap: 16px;
+    }
+    .brand { font-weight: 900; letter-spacing: .04em; line-height: 1.2; }
+    .brand span { color: var(--accent); }
+    .back {
+      text-decoration: none; color: var(--text); border: 1px solid var(--border);
+      border-radius: 999px; padding: 10px 15px; font-size: .9rem;
+    }
+    main { padding: 42px 0 64px; }
+    .hero { text-align: center; margin-bottom: 28px; }
+    .eyebrow {
+      display: inline-flex; gap: 8px; align-items: center; color: var(--accent);
+      border: 1px solid rgba(39,216,255,.28); background: rgba(39,216,255,.07);
+      border-radius: 999px; padding: 7px 12px; font-size: .78rem;
+      font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin: 16px 0 10px; line-height: 1.08; }
+    h1 span { color: var(--accent); }
+    .sub { max-width: 650px; margin: 0 auto; color: var(--muted); line-height: 1.7; }
+    .panel {
+      border: 1px solid var(--border); border-radius: 22px; overflow: hidden;
+      background: linear-gradient(145deg, rgba(18,36,59,.95), rgba(10,24,41,.96));
+      box-shadow: 0 24px 70px rgba(0,0,0,.22);
+    }
+    .panel-head {
+      padding: 22px 24px; display: flex; align-items: center;
+      justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--border);
+    }
+    h2 { margin: 0; font-size: 1.15rem; }
+    .live-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .78rem; color: var(--muted);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    th, td { text-align: left; padding: 17px 22px; border-bottom: 1px solid var(--border); }
+    th { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    td { font-size: .91rem; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .empty { text-align: center; padding: 52px 24px 58px; }
+    .empty-icon {
+      width: 64px; height: 64px; display: grid; place-items: center;
+      margin: 0 auto 16px; border-radius: 20px; font-size: 1.7rem;
+      color: var(--accent); background: rgba(39,216,255,.09);
+      border: 1px solid rgba(39,216,255,.2);
+    }
+    .empty h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    .empty p { margin: 0 auto; max-width: 430px; color: var(--muted); line-height: 1.65; }
+    .notice {
+      display: flex; gap: 12px; padding: 16px 18px; margin-top: 18px;
+      color: var(--muted); line-height: 1.6; font-size: .86rem;
+      border: 1px solid var(--border); border-radius: 15px;
+      background: rgba(13,27,46,.65);
+    }
+    .notice strong { color: var(--text); }
+    footer { padding: 24px 0 32px; text-align: center; color: var(--muted); font-size: .82rem; }
+    .status { display: inline-block; border-radius: 999px; padding: 5px 10px; font-size: .76rem; font-weight: 800; }
+    .status-success { color: var(--success); background: rgba(43,214,123,.1); }
+    .status-pending, .status-processing { color: var(--pending); background: rgba(255,200,87,.1); }
+    .status-failed { color: var(--failed); background: rgba(255,101,119,.1); }
+    @media (max-width: 600px) {
+      .wrap { width: min(100% - 22px, 1050px); }
+      .nav { min-height: 66px; }
+      .brand { font-size: .9rem; }
+      .back { padding: 8px 11px; font-size: .82rem; }
+      main { padding-top: 30px; }
+      .panel-head { padding: 18px; }
+      .empty { padding: 42px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">YOUSUF ALI <span>GAMING</span></div>
+      <a class="back" href="./">← Back to Home</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> TOP-UP ACTIVITY</div>
+      <h1>Recent <span>Top-Ups</span></h1>
+      <p class="sub">Check completed top-up activity and order status. Only verified order information should appear here.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="activity-title">
+      <div class="panel-head">
+        <h2 id="activity-title">Latest Orders</h2>
+        <div class="live-label"><span class="dot"></span><span id="data-status">Waiting for secure API</span></div>
+      </div>
+      <div id="activity-content">
+        <div class="empty" role="status">
+          <div class="empty-icon" aria-hidden="true">◇</div>
+          <h3>No top-up activity yet</h3>
+          <p>Verified top-up orders will appear here after the website is connected to a real order API. No sample orders are displayed.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="notice">
+      <span aria-hidden="true">ℹ️</span>
+      <div><strong>Live order data is not connected yet.</strong><br>
+      This page currently displays no orders. Later, connect a secure backend that verifies orders with your top-up provider before showing their status here. Never put private API keys in this HTML file.</div>
+    </div>
+  </main>
+
+  <footer class="wrap">© <span id="year"></span> YOUSUF ALI Gaming. All rights reserved.</footer>
+
+  <script>
+    "use strict";
+
+    // Real API integration will be added later.
+    // Do not place provider secrets/API keys in this public HTML file.
+    // Expected future backend response:
+    // {
+    //   "orders": [
+    //     {
+    //       "playerUid": "verified UID",
+    //       "diamonds": 100,
+    //       "status": "success",
+    //       "completedAt": "2026-10-21T10:00:00Z"
+    //     }
+    //   ]
+    // }
+    //
+    // The page intentionally does not create demo/sample orders.
+    // When ready, fetch data from your own secure backend endpoint and
+    // render only orders whose status has been verified by the provider.
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Safe rendering helper for later API integration.
+    // Use textContent rather than inserting API data with innerHTML.
+    function renderVerifiedOrders(orders) {
+      const content = document.getElementById("activity-content");
+      const status = document.getElementById("data-status");
+
+      if (!Array.isArray(orders) || orders.length === 0) {
+        content.innerHTML = `
+          <div class="empty" role="status">
+            <div class="empty-icon" aria-hidden="true">◇</div>
+            <h3>No top-up activity yet</h3>
+            <p>No verified orders are available to display.</p>
+          </div>`;
+        status.textContent = "No verified orders";
+        return;
+      }
+
+      const allowedStatuses = new Set(["success", "pending", "processing", "failed"]);
+      const table = document.createElement("div");
+      table.className = "table-wrap";
+      const tableEl = document.createElement("table");
+      const thead = document.createElement("thead");
+      thead.innerHTML = "<tr><th>Player UID</th><th>Diamonds</th><th>Status</th><th>Completed / Updated</th></tr>";
+      const tbody = document.createElement("tbody");
+
+      orders.forEach(order => {
+        if (!order || !order.verified) return;
+
+        const tr = document.createElement("tr");
+        const uidCell = document.createElement("td");
+        const diamondsCell = document.createElement("td");
+        const statusCell = document.createElement("td");
+        const timeCell = document.createElement("td");
+
+        uidCell.textContent = String(order.playerUid || "—");
+        diamondsCell.textContent = Number.isFinite(Number(order.diamonds))
+          ? Number(order.diamonds).toLocaleString() : "—";
+
+        const normalizedStatus = String(order.status || "").toLowerCase();
+        const safeStatus = allowedStatuses.has(normalizedStatus) ? normalizedStatus : "pending";
+        const badge = document.createElement("span");
+        badge.className = "status status-" + safeStatus;
+        badge.textContent = safeStatus.charAt(0).toUpperCase() + safeStatus.slice(1);
+        statusCell.appendChild(badge);
+
+        const date = order.completedAt || order.updatedAt;
+        const parsed = date ? new Date(date) : null;
+        timeCell.textContent = parsed && !Number.isNaN(parsed.getTime())
+          ? parsed.toLocaleString() : "—";
+
+        tr.append(uidCell, diamondsCell, statusCell, timeCell);
+        tbody.appendChild(tr);
+      });
+
+      if (!tbody.children.length) {
+        content.innerHTML = `
+          <div class="empty" role="status">
+            <div class="empty-icon" aria-hidden="true">◇</div>
+            <h3>No verified top-ups yet</h3>
+            <p>There are currently no provider-verified orders to display.</p>
+          </div>`;
+        status.textContent = "No verified orders";
+        return;
+      }
+
+      tableEl.append(thead, tbody);
+      table.appendChild(tableEl);
+      content.replaceChildren(table);
+      status.textContent = "Verified activity";
+    }
+
+    // renderVerifiedOrders is intentionally not called until a real,
+    // authenticated backend endpoint is configured.
+  </script>
+</body>
+</html>
