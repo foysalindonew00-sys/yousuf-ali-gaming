@@ -3,360 +3,484 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07111f">
-  <title>Free Fire Diamond Order | YOUSUF ALI Gaming</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Free Fire Diamonds | YOUSUF ALI Gaming</title>
 
   <style>
-    :root {
-      --bg:#07111f;
-      --panel:#0d1b2e;
-      --text:#eef6ff;
-      --muted:#9db0c8;
-      --cyan:#27d8ff;
-      --blue:#6877ff;
-      --line:rgba(148,190,230,.18);
-    }
-    * { box-sizing:border-box; }
+    * { box-sizing: border-box; }
+
     body {
-      margin:0;
-      background:radial-gradient(ellipse at top left,rgba(39,216,255,.13),transparent 35rem),var(--bg);
-      color:var(--text);
-      font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+      margin: 0;
+      padding: 20px 12px;
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: #fff;
     }
-    .wrap { width:min(1000px,calc(100% - 28px)); margin:auto; }
-    header { border-bottom:1px solid var(--line); }
-    .nav {
-      min-height:72px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+
+    .container {
+      max-width: 600px;
+      margin: auto;
     }
-    .brand { font-weight:900; }
-    .brand span, h1 span { color:var(--cyan); }
-    a { color:inherit; }
-    .back {
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:9px 13px;
-      text-decoration:none;
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
     }
-    main { padding:32px 0 50px; }
-    .hero { text-align:center; margin-bottom:25px; }
-    .tag {
-      display:inline-block;
-      padding:7px 12px;
-      border:1px solid rgba(39,216,255,.3);
-      border-radius:999px;
-      color:var(--cyan);
-      font-size:.76rem;
-      font-weight:800;
+
+    .header h1 {
+      color: #52d8ff;
+      font-size: 27px;
+      margin-bottom: 8px;
     }
-    h1 { font-size:clamp(2rem,5vw,3rem); margin:15px 0 10px; }
-    .hero p { color:var(--muted); line-height:1.6; }
-    .layout {
-      display:grid;
-      grid-template-columns:minmax(0,1.4fr) minmax(250px,.8fr);
-      gap:20px;
-      align-items:start;
-    }
+
+    .header p { color: #c4cce0; }
+
     .card {
-      background:linear-gradient(145deg,#12243b,#0a1829);
-      border:1px solid var(--line);
-      border-radius:18px;
-      overflow:hidden;
+      background: #151d32;
+      border: 1px solid #2d3b5c;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
     }
-    .card-head { padding:18px 20px; border-bottom:1px solid var(--line); }
-    h2 { margin:0; font-size:1.15rem; }
-    .card-body { padding:20px; }
-    .field { margin-bottom:18px; }
-    label,.label { display:block; margin-bottom:8px; font-weight:750; }
-    input,select {
-      width:100%;
-      padding:13px;
-      border:1px solid var(--line);
-      border-radius:10px;
-      background:#091729;
-      color:var(--text);
-      font:inherit;
+
+    h2 {
+      font-size: 19px;
+      margin-top: 0;
+      color: #52d8ff;
     }
-    .hint { color:var(--muted); font-size:.8rem; margin-top:7px; line-height:1.5; }
-    .packages { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-    .package input {
-      width:auto;
-      position:absolute;
-      opacity:0;
+
+    label {
+      display: block;
+      margin: 15px 0 7px;
+      font-weight: bold;
+      font-size: 14px;
     }
-    .package label {
-      display:block;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:14px;
-      cursor:pointer;
-      margin:0;
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #3c4c6f;
+      border-radius: 9px;
+      background: #0c1428;
+      color: white;
+      font-size: 15px;
+      outline: none;
     }
-    .package label strong { display:block; margin-bottom:5px; }
-    .package label span { color:var(--muted); font-size:.85rem; }
-    .package input:checked + label {
-      border-color:var(--cyan);
-      background:rgba(39,216,255,.09);
+
+    .package-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
+
+    .package {
+      border: 1px solid #354767;
+      background: #0e172c;
+      border-radius: 10px;
+      padding: 13px 10px;
+      cursor: pointer;
+      text-align: left;
+      color: white;
+    }
+
+    .package.selected {
+      border: 2px solid #52d8ff;
+      background: #15304b;
+    }
+
+    .package strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 7px;
+    }
+
+    .package span {
+      color: #55e6a5;
+      font-weight: bold;
+    }
+
+    .package small {
+      display: block;
+      color: #b9c5db;
+      margin-top: 6px;
+    }
+
+    .total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #0b1428;
+    }
+
+    .total strong {
+      font-size: 23px;
+      color: #55e6a5;
+    }
+
+    .pay-number {
+      padding: 12px;
+      background: #0b1428;
+      border-radius: 9px;
+      margin-top: 12px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 18px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .submit-btn {
+      color: #071322;
+      background: #52d8ff;
+    }
+
+    .submit-btn:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .copy-btn {
+      width: auto;
+      padding: 8px 12px;
+      margin: 8px 0 0;
+      background: #253653;
+      color: white;
+      font-size: 13px;
+    }
+
     .notice {
-      border:1px solid rgba(255,209,102,.25);
-      background:rgba(255,209,102,.07);
-      color:#ffe8ac;
-      border-radius:11px;
-      padding:12px;
-      font-size:.84rem;
-      line-height:1.55;
-      margin-bottom:18px;
+      color: #bdc8dc;
+      font-size: 13px;
+      line-height: 1.7;
     }
-    .summary-row {
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 0;
-      border-bottom:1px solid var(--line);
-      font-size:.9rem;
+
+    .message {
+      display: none;
+      padding: 13px;
+      margin-top: 15px;
+      border-radius: 9px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
     }
-    .summary-row span { color:var(--muted); }
-    .summary-row strong { text-align:right; overflow-wrap:anywhere; }
-    .total strong { color:var(--cyan); font-size:1.3rem; }
-    .btn {
-      display:block;
-      width:100%;
-      border:0;
-      border-radius:11px;
-      padding:14px;
-      background:linear-gradient(90deg,var(--cyan),var(--blue));
-      color:#04111d;
-      font-size:1rem;
-      font-weight:900;
-      cursor:pointer;
-      margin-top:18px;
+
+    .success {
+      display: block;
+      background: #123d31;
+      color: #aaffd5;
     }
-    .btn:disabled { opacity:.6; cursor:wait; }
-    .result {
-      display:none;
-      margin-top:16px;
-      padding:14px;
-      border:1px solid var(--line);
-      border-radius:11px;
-      line-height:1.6;
-      overflow-wrap:anywhere;
+
+    .error {
+      display: block;
+      background: #49232c;
+      color: #ffd4dc;
     }
-    .result.show { display:block; }
-    .result p { margin-bottom:0; }
-    footer { text-align:center; color:var(--muted); padding:25px 0; font-size:.82rem; }
-    @media(max-width:760px) {
-      .layout { grid-template-columns:1fr; }
-      .card-body { padding:16px; }
-    }
-    @media(max-width:420px) {
-      .packages { grid-template-columns:1fr; }
-      .brand { font-size:.85rem; }
+
+    a { color: #52d8ff; }
+
+    @media (max-width: 360px) {
+      .package-grid { grid-template-columns: 1fr; }
     }
   </style>
-
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
-<header>
-  <div class="wrap nav">
-    <div class="brand">YOUSUF ALI <span>GAMING</span></div>
-    <a class="back" href="./">← Back to Home</a>
-  </div>
-</header>
+<div class="container">
 
-<main class="wrap">
-  <section class="hero">
-    <div class="tag">FREE FIRE • DIAMOND TOP-UP</div>
-    <h1>Place Your <span>Order</span></h1>
-    <p>Select a package and enter your player details. No payment is collected on this page.</p>
-  </section>
+  <header class="header">
+    <h1>YOUSUF ALI Gaming</h1>
+    <p>Free Fire Diamond & Membership Order</p>
+  </header>
 
-  <div class="layout">
+  <form id="orderForm">
+
     <section class="card">
-      <div class="card-head"><h2>💎 Order Details</h2></div>
-      <div class="card-body">
-        <div class="notice">
-          <strong>Order notice:</strong> Submitting this form sends an order request to the store database. It does not pay for or automatically deliver diamonds. Never enter your game password or card details.
-        </div>
+      <h2>💎 Select Your Package</h2>
+      <p class="notice">Choose one package to continue.</p>
 
-        <form id="orderForm">
-          <div class="field">
-            <label for="playerUid">Free Fire Player UID *</label>
-            <input id="playerUid" name="playerUid" inputmode="numeric"
-              autocomplete="off" placeholder="Enter your Player UID"
-              required maxlength="24" pattern="[0-9]{5,24}">
-            <div class="hint">Enter your numeric in-game UID only.</div>
-          </div>
-          <div class="field">
-            <span class="label">Choose Diamond Package *</span>
-            <div class="packages">
-              <div class="package"><input type="radio" id="p50" name="package" value="50 Diamonds" data-price="64" required><label for="p50"><strong>💎 50 Diamonds</strong><span>৳64</span></label></div>
-              <div class="package"><input type="radio" id="p70" name="package" value="70 Diamonds" data-price="85"><label for="p70"><strong>💎 70 Diamonds</strong><span>৳85</span></label></div>
-              <div class="package"><input type="radio" id="p90" name="package" value="90 Diamonds" data-price="110"><label for="p90"><strong>💎 90 Diamonds</strong><span>৳110</span></label></div>
-              <div class="package"><input type="radio" id="p140" name="package" value="140 Diamonds" data-price="165"><label for="p140"><strong>💎 140 Diamonds</strong><span>৳165</span></label></div>
-              <div class="package"><input type="radio" id="p355" name="package" value="355 Diamonds" data-price="415"><label for="p355"><strong>💎 355 Diamonds</strong><span>৳415</span></label></div>
-              <div class="package"><input type="radio" id="p720" name="package" value="720 Diamonds" data-price="810"><label for="p720"><strong>💎 720 Diamonds</strong><span>৳810</span></label></div>
-              <div class="package"><input type="radio" id="p1450" name="package" value="1450 Diamonds" data-price="1620"><label for="p1450"><strong>💎 1450 Diamonds</strong><span>৳1620</span></label></div>
-            </div>
-          </div>
-          <div class="field">
-            <label for="contact">Contact Number *</label>
-            <input id="contact" name="contact" type="tel"
-              autocomplete="tel" placeholder="e.g. 01XXXXXXXXX"
-              required minlength="8" maxlength="20">
-          </div>
-          <div class="field">
-            <label for="server">Server *</label>
-            <select id="server" name="server" required>
-              <option value="Indonesia">Indonesia Server</option>
-              <option value="Bangladesh">Bangladesh Server</option>
-              <option value="Thailand">Thailand Server</option>
-              <option value="Other">Other / Confirm with seller</option>
-            </select>
-          </div>
-          <button class="btn" id="submitBtn" type="submit">Submit Order</button>
-          <div class="result" id="result" role="status" aria-live="polite">
-            <strong id="resultTitle"></strong>
-            <p id="resultText"></p>
-          </div>
-        </form>
+      <div class="package-grid" id="packageGrid"></div>
+
+      <div class="total">
+        <span>Total Amount</span>
+        <strong id="totalPrice">৳0</strong>
       </div>
     </section>
-    <aside class="card">
-      <div class="card-head"><h2>📋 Order Summary</h2></div>
-      <div class="card-body">
-        <div class="summary-row"><span>Player UID</span><strong id="sumUid">Not entered</strong></div>
-        <div class="summary-row"><span>Package</span><strong id="sumPackage">Not selected</strong></div>
-        <div class="summary-row"><span>Server</span><strong id="sumServer">Indonesia</strong></div>
-        <div class="summary-row"><span>Contact</span><strong id="sumContact">Not entered</strong></div>
-        <div class="summary-row total"><span>Estimated total</span><strong id="sumPrice">৳—</strong></div>
-        <div class="notice" style="margin-top:18px">
-          Payment is not collected here. Wait for the seller to confirm your order.
-        </div>
+
+    <section class="card">
+      <h2>🎮 Player Information</h2>
+
+      <label for="uid">Free Fire UID *</label>
+      <input id="uid" name="uid" inputmode="numeric"
+        pattern="[0-9]{5,20}" maxlength="20"
+        placeholder="Enter your Free Fire UID" required>
+
+      <label for="server">Server *</label>
+      <select id="server" name="server" required>
+        <option value="">Select server</option>
+        <option value="Bangladesh">Bangladesh</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Thailand">Thailand</option>
+        <option value="Singapore">Singapore</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="contactNumber">Your Contact Number *</label>
+      <input id="contactNumber" name="contactNumber"
+        type="tel" maxlength="20"
+        placeholder="Enter your phone number" required>
+    </section>
+
+    <section class="card">
+      <h2>💳 Payment Information</h2>
+
+      <label for="paymentMethod">Payment Method *</label>
+      <select id="paymentMethod" name="paymentMethod" required>
+        <option value="">Select payment method</option>
+        <option value="bKash">bKash</option>
+        <option value="Nagad">Nagad</option>
+        <option value="Rocket">Rocket</option>
+      </select>
+
+      <div class="pay-number" id="paymentInfo" hidden>
+        <strong>Payment number:</strong>
+        <div id="paymentNumber"></div>
+        <p class="notice">
+          Send the displayed total to this number using the correct
+          payment option, then enter the transaction ID below.
+        </p>
+        <button type="button" class="copy-btn" id="copyNumber">
+          Copy Payment Number
+        </button>
       </div>
-    </aside>
-  </div>
-</main>
-<footer class="wrap">© <span id="year"></span> YOUSUF ALI Gaming. All rights reserved.</footer>
+
+      <label for="transactionId">Transaction ID (TrxID) *</label>
+      <input id="transactionId" name="transactionId"
+        maxlength="100" placeholder="Enter payment TrxID" required>
+
+      <p class="notice">
+        Do not submit a fake or reused TrxID. Your payment must be
+        verified by the store admin before an order is fulfilled.
+      </p>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Submit Order
+      </button>
+
+      <div id="message" class="message" role="status"
+        aria-live="polite"></div>
+    </section>
+
+  </form>
+
+  <p class="notice" style="text-align:center">
+    Submitting an order does not automatically complete a top-up.
+    Wait for admin verification and status updates.
+  </p>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script>
-"use strict";
-/* Firebase project configuration */
-const firebaseConfig = {
-  apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
-  authDomain: "yousuf-ali-gaming.firebaseapp.com",
-  projectId: "yousuf-ali-gaming",
-  storageBucket: "yousuf-ali-gaming.firebasestorage.app",
-  messagingSenderId: "736038389268",
-  appId: "1:736038389268:web:b717a07cb43076bd928901"
-};
-const form = document.getElementById("orderForm");
-const uidInput = document.getElementById("playerUid");
-const contactInput = document.getElementById("contact");
-const serverInput = document.getElementById("server");
-const packageInputs = [...document.querySelectorAll('input[name="package"]')];
-const submitBtn = document.getElementById("submitBtn");
-const result = document.getElementById("result");
-const resultTitle = document.getElementById("resultTitle");
-const resultText = document.getElementById("resultText");
-document.getElementById("year").textContent = new Date().getFullYear();
-let db = null;
-let firebaseReady = false;
-try {
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  // Firebase project configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
+    authDomain: "yousuf-ali-gaming.firebaseapp.com",
+    projectId: "yousuf-ali-gaming",
+    storageBucket: "yousuf-ali-gaming.firebasestorage.app",
+    messagingSenderId: "736038389268",
+    appId: "1:736038389268:web:b717a07cb43076bd928901"
+  };
+
+  // All 12 packages from the homepage
+  const packages = [
+    { name: "50 Diamonds", amount: "50 DM", price: 64 },
+    { name: "70 Diamonds", amount: "70 DM", price: 85 },
+    { name: "90 Diamonds", amount: "90 DM", price: 110 },
+    { name: "140 Diamonds", amount: "140 DM", price: 165 },
+    { name: "355 Diamonds", amount: "355 DM", price: 415 },
+    { name: "720 Diamonds", amount: "720 DM", price: 810 },
+    { name: "1450 Diamonds", amount: "1450 DM", price: 1620 },
+    { name: "2180 Diamonds", amount: "2180 DM", price: 2350 },
+    { name: "3640 Diamonds", amount: "3640 DM", price: 3850 },
+    { name: "7500 Diamonds", amount: "7500 DM", price: 7700 },
+    { name: "Weekly Membership", amount: "Weekly", price: 235 },
+    { name: "Monthly Membership", amount: "Monthly", price: 710 }
+  ];
+
+  // Replace these values if your actual receiving numbers differ.
+  const paymentAccounts = {
+    bKash: "01403572238",
+    Nagad: "01403572238",
+    Rocket: "01403572238"
+  };
+
+  let selectedPackage = null;
+  let db = null;
+
+  const packageGrid = document.getElementById("packageGrid");
+  const totalPrice = document.getElementById("totalPrice");
+  const paymentMethod = document.getElementById("paymentMethod");
+  const paymentInfo = document.getElementById("paymentInfo");
+  const paymentNumber = document.getElementById("paymentNumber");
+  const message = document.getElementById("message");
+  const submitBtn = document.getElementById("submitBtn");
+
+  function taka(amount) {
+    return "৳" + amount.toLocaleString("en-BD") + " BDT";
   }
-  db = firebase.firestore();
-  firebaseReady = true;
-} catch (error) {
-  console.error("Firebase initialization error:", error);
-}
-function selectedPackage() {
-  const selected = packageInputs.find(item => item.checked);
-  return selected
-    ? { name: selected.value, price: Number(selected.dataset.price) }
-    : null;
-}
-function updateSummary() {
-  const pack = selectedPackage();
-  document.getElementById("sumUid").textContent =
-    uidInput.value.trim() || "Not entered";
-  document.getElementById("sumPackage").textContent =
-    pack ? pack.name : "Not selected";
-  document.getElementById("sumServer").textContent = serverInput.value;
-  document.getElementById("sumContact").textContent =
-    contactInput.value.trim() || "Not entered";
-  document.getElementById("sumPrice").textContent =
-    pack ? "৳" + pack.price.toLocaleString("en-BD") : "৳—";
-}
-function showResult(title, message, success) {
-  resultTitle.textContent = title;
-  resultText.textContent = message;
-  result.style.borderColor = success ? "#27d8a0" : "#ff9d9d";
-  result.classList.add("show");
-  result.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-form.addEventListener("input", updateSummary);
-form.addEventListener("change", updateSummary);
-form.addEventListener("submit", async function(event) {
-  event.preventDefault();
-  if (!form.reportValidity()) return;
-  const pack = selectedPackage();
-  if (!pack) return;
-  if (!firebaseReady || !db) {
-    showResult(
-      "Firebase unavailable",
-      "The order was not saved. Please check your internet connection and Firebase setup.",
-      false
-    );
-    return;
+
+  function showMessage(text, type) {
+    message.textContent = text;
+    message.className = "message " + type;
   }
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Submitting...";
-  try {
-    const orderData = {
-      uid: uidInput.value.trim(),
-      server: serverInput.value,
-      contact: contactInput.value.trim(),
-      paymentMethod: "Not paid - confirm with seller",
-      transactionId: "",
-      package: pack.name,
-      total: pack.price,
-      status: "Pending",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    const docRef = await db.collection("orders").add(orderData);
-    showResult(
-      "Order submitted successfully!",
-      "Your order reference is " + docRef.id +
-      ". Package: " + pack.name +
-      ". Total: ৳" + pack.price.toLocaleString("en-BD") +
-      ". Status: Pending. No payment has been taken. Please wait for seller confirmation.",
-      true
-    );
-    form.reset();
-    updateSummary();
-  } catch (error) {
-    console.error("Order submission failed:", error);
-    let message = "The order could not be saved. Please try again.";
-    if (error.code === "permission-denied") {
-      message = "Firestore security rules blocked this order. The database rules need a safe public order-creation rule; do not disable database security.";
-    } else if (!navigator.onLine) {
-      message = "Your device appears to be offline. Connect to the internet and try again.";
+
+  // Render all 12 package cards
+  packages.forEach((item, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "package";
+    button.innerHTML =
+      "<strong>💎 " + item.name + "</strong>" +
+      "<span>" + taka(item.price) + "</span>" +
+      "<small>" + item.amount + " • Game top-up</small>";
+
+    button.addEventListener("click", () => {
+      selectedPackage = item;
+
+      document.querySelectorAll(".package").forEach(card => {
+        card.classList.remove("selected");
+      });
+
+      button.classList.add("selected");
+      totalPrice.textContent = taka(item.price);
+      showMessage("", "");
+    });
+
+    packageGrid.appendChild(button);
+  });
+
+  // Display payment number based on selected method
+  paymentMethod.addEventListener("change", () => {
+    const method = paymentMethod.value;
+
+    if (method && paymentAccounts[method]) {
+      paymentNumber.textContent = paymentAccounts[method];
+      paymentInfo.hidden = false;
+    } else {
+      paymentInfo.hidden = true;
     }
-    showResult("Order not submitted", message, false);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Submit Order";
+  });
+
+  document.getElementById("copyNumber").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(paymentNumber.textContent);
+      showMessage("Payment number copied.", "success");
+    } catch (error) {
+      showMessage("Please copy this number manually: " +
+        paymentNumber.textContent, "error");
+    }
+  });
+
+  // Initialize Firebase
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    db = firebase.firestore();
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
   }
-});
-updateSummary();
+
+  // Submit order to Firestore
+  document.getElementById("orderForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!selectedPackage) {
+      showMessage("Please select one of the 12 packages first.", "error");
+      return;
+    }
+
+    if (!db) {
+      showMessage("Firebase could not initialize. Please refresh and try again.", "error");
+      return;
+    }
+
+    const uid = document.getElementById("uid").value.trim();
+    const server = document.getElementById("server").value;
+    const contact = document.getElementById("contactNumber").value.trim();
+    const method = paymentMethod.value;
+    const trxId = document.getElementById("transactionId").value.trim();
+
+    if (!uid || !server || !contact || !method || !trxId) {
+      showMessage("Please complete all required fields.", "error");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting...";
+
+    try {
+      const docRef = await db.collection("orders").add({
+        uid: uid,
+        server: server,
+        contact: contact,
+        paymentMethod: method,
+        transactionId: trxId,
+        package: selectedPackage.name,
+        amount: selectedPackage.amount,
+        total: selectedPackage.price,
+        status: "Pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      showMessage(
+        "Order submitted successfully! Order ID: " + docRef.id +
+        ". Status: Pending. Please wait for admin verification.",
+        "success"
+      );
+
+      document.getElementById("orderForm").reset();
+      selectedPackage = null;
+      document.querySelectorAll(".package").forEach(card => {
+        card.classList.remove("selected");
+      });
+      totalPrice.textContent = "৳0";
+      paymentInfo.hidden = true;
+
+    } catch (error) {
+      console.error("Order submission error:", error);
+
+      if (error.code === "permission-denied") {
+        showMessage(
+          "Order could not be saved because Firestore rules denied access. " +
+          "Check your existing Firestore Rules; do not disable security.",
+          "error"
+        );
+      } else {
+        showMessage(
+          "Order submission failed. Please check your internet and try again. " +
+          "Error: " + (error.code || "unknown"),
+          "error"
+        );
+      }
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Order";
+    }
+  });
 </script>
+
 </body>
 </html>
