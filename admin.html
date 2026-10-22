@@ -39,7 +39,9 @@
       color: white;
       border: 0;
       font-weight: bold;
+      cursor: pointer;
     }
+    button:disabled { opacity: .6; }
     .secondary { background: #34425c; }
     .order {
       background: #0e1729;
@@ -85,8 +87,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <script>
+"use strict";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
+  apiKey: "AIzaSySyRX9oCF2D0vGUkUCRxpv8o2rhSSVD3p8",
   authDomain: "yousuf-ali-gaming.firebaseapp.com",
   projectId: "yousuf-ali-gaming",
   storageBucket: "yousuf-ali-gaming.firebasestorage.app",
@@ -98,6 +102,7 @@ const firebaseConfig = {
 const ADMIN_UID = "gIsJxXOyGKhUhf6ontux2zJnF9N2";
 
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
@@ -126,7 +131,8 @@ document.getElementById("loginForm").addEventListener(
 
       message.textContent = "Login successful.";
     } catch (error) {
-      message.textContent = "Login failed. Check your email and password.";
+      message.textContent =
+        "Login failed. Check your email and password.";
     }
   }
 );
@@ -139,6 +145,7 @@ auth.onAuthStateChanged(async function(user) {
   } else {
     loginBox.style.display = "block";
     dashboard.style.display = "none";
+    ordersBox.replaceChildren();
   }
 });
 
@@ -175,6 +182,8 @@ async function loadOrders() {
       addText("Server", data.server);
       addText("Contact", data.contact);
       addText("Total", data.total);
+      addText("Payment Method", data.paymentMethod);
+      addText("TrxID", data.transactionId);
       addText("Status", data.status || "Pending");
 
       const select = document.createElement("select");
@@ -195,16 +204,49 @@ async function loadOrders() {
       save.textContent = "Update Status";
 
       save.addEventListener("click", async function() {
+        if (!auth.currentUser ||
+            auth.currentUser.uid !== ADMIN_UID) {
+          orderMessage.textContent = "Admin authorization required.";
+          return;
+        }
+
         save.disabled = true;
+        orderMessage.textContent = "Updating order...";
+
         try {
+          const newStatus = select.value;
+
+          // Update the private order first.
           await db.collection("orders").doc(doc.id).update({
-            status: select.value
+            status: newStatus
           });
-          orderMessage.textContent = "Status updated.";
-          await loadOrders();
-        } catch (error) {
+
+          const publicRef = db.collection("publicTopUps").doc(doc.id);
+
+          if (newStatus === "Completed") {
+            // Publish only safe, non-identifying information.
+            await publicRef.set({
+              package: String(data.package || "Top-Up"),
+              total: Number(data.total) || 0,
+              status: "success",
+              verified: true,
+              completedAt:
+                firebase.firestore.FieldValue.serverTimestamp()
+            });
+          } else {
+            // Hide an order from public activity if it is no longer
+            // marked Completed.
+            await publicRef.delete();
+          }
+
           orderMessage.textContent =
-            "Update failed. Check Firestore Rules.";
+            "Order status updated. Public activity synced.";
+          await loadOrders();
+
+        } catch (error) {
+          console.error("Status update error:", error);
+          orderMessage.textContent =
+            "Update or public sync failed. Check Firestore Rules.";
           save.disabled = false;
         }
       });
@@ -213,9 +255,11 @@ async function loadOrders() {
       card.appendChild(save);
       ordersBox.appendChild(card);
     });
+
   } catch (error) {
+    console.error("Load orders error:", error);
     orderMessage.textContent =
-      "Could not load orders. Firestore access may be blocked.";
+      "Could not load orders. Check Firestore Rules.";
   }
 }
 
