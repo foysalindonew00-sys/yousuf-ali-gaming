@@ -218,7 +218,7 @@ let chosen = null;
 packages.forEach((p,i)=>{
   const card=document.createElement("article");
   card.className="product";
-  card.innerHTML=`<div class="product-top"><span class="diamond">💎</span>${p.tag?`<span class="tag">${p.tag}</span>`:""}</div><h3>${p.name}</h3><p>${p.amount} • Game top-up</p><div class="price">৳${p.price.toLocaleString("en-BD")} <small>BDT</small></div><button class="btn btn-primary" type="button" data-index="${i}">Order on WhatsApp ↗</button>`;
+  card.innerHTML=`<div class="product-top"><span class="diamond">💎</span>${p.tag?`<span class="tag">${p.tag}</span>`:""}</div><h3>${p.name}</h3><p>${p.amount} • Game top-up</p><div class="price">৳${p.price.toLocaleString("en-BD")} <small>BDT</small></div><button class="btn btn-primary" type="button" data-index="${i}">Order  ↗</button>`;
   grid.appendChild(card);
 });
 const dialog=document.getElementById("orderDialog");
