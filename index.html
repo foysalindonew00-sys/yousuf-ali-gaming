@@ -289,8 +289,10 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
       server: getValue("server"),
       contact: getValue("contactNumber"),
       paymentMethod: getValue("paymentMethod"),
-      transactionId: getValue("transactionId"),
+      transactionId: getValue("transactionId"), 
+
       package: chosen.name,
+      amount: chosen.amount,
       total: chosen.price,
       status: "Pending",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
