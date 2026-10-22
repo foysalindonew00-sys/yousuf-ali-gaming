@@ -4,83 +4,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>YOUSUF ALI Gaming | Admin</title>
+  <title>YOUSUF ALI Gaming — Admin</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 20px;
+      padding: 18px;
       background: #0b1020;
-      color: #eef3ff;
+      color: #eef2ff;
       font-family: Arial, sans-serif;
     }
-    main {
-      max-width: 900px;
-      margin: 30px auto;
-    }
-    .panel {
-      background: #151e33;
-      border: 1px solid #2b3956;
+    .wrap { max-width: 760px; margin: auto; }
+    h1 { color: #00d4ff; font-size: 25px; }
+    .panel, .order {
+      background: #151d32;
+      border: 1px solid #293653;
       border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 18px;
+      padding: 16px;
+      margin: 14px 0;
+      overflow-wrap: anywhere;
     }
-    h1 { color: #62c7ff; }
-    input, button, select {
-      box-sizing: border-box;
+    input, select, button {
       width: 100%;
       padding: 12px;
       margin: 7px 0;
       border-radius: 8px;
-      border: 1px solid #445472;
+      border: 1px solid #394967;
       font-size: 15px;
     }
-    button {
-      background: #1688e8;
+    input, select {
+      background: #0b1020;
       color: white;
+    }
+    button {
+      background: #00c9ef;
+      color: #07111d;
       border: 0;
       font-weight: bold;
       cursor: pointer;
     }
-    button:disabled { opacity: .6; }
-    .secondary { background: #34425c; }
-    .order {
-      background: #0e1729;
-      padding: 14px;
-      border-radius: 9px;
-      margin: 12px 0;
-      overflow-wrap: anywhere;
-    }
-    .muted { color: #b6c4db; }
-    #dashboard { display: none; }
+    button:disabled { opacity: .55; }
+    .secondary { background: #293653; color: white; }
+    .status { color: #a5f3fc; overflow-wrap: anywhere; }
+    .order p { margin: 9px 0; }
+    .hidden { display: none; }
+    small { color: #b9c6df; }
   </style>
 </head>
 <body>
-<main>
-  <h1>YOUSUF ALI GAMING</h1>
-  <p class="muted">Admin Order Dashboard</p>
+<div class="wrap">
+  <h1>YOUSUF ALI Gaming</h1>
+  <p>Admin Order Dashboard</p>
 
-  <section class="panel" id="login">
+  <section id="login" class="panel">
     <h2>Admin Login</h2>
     <form id="loginForm">
       <input id="email" type="email"
-        placeholder="Admin email" required>
+        placeholder="Admin email" autocomplete="username" required>
       <input id="password" type="password"
-        placeholder="Admin password" required>
-      <button type="submit">Login</button>
+        placeholder="Password" autocomplete="current-password" required>
+      <button id="loginButton" type="submit">Login</button>
     </form>
-    <p id="message" role="status"></p>
+    <p id="message" class="status" aria-live="polite"></p>
   </section>
 
-  <section class="panel" id="dashboard">
-    <h2>Orders</h2>
-    <button id="refresh" type="button">Refresh Orders</button>
-    <button id="logout" class="secondary" type="button">
-      Logout
-    </button>
-    <p id="orderMessage" role="status"></p>
+  <section id="dashboard" class="hidden">
+    <div class="panel">
+      <h2>Orders</h2>
+      <p id="orderMessage" class="status" aria-live="polite">
+        Loading orders...
+      </p>
+      <button id="refresh" type="button" class="secondary">
+        Refresh Orders
+      </button>
+      <button id="logout" type="button" class="secondary">
+        Logout
+      </button>
+    </div>
     <div id="orders"></div>
   </section>
-</main>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
@@ -89,8 +92,9 @@
 <script>
 "use strict";
 
+// Firebase project configuration
 const firebaseConfig = {
-  apiKey: "AIzaSySyRX9oCF2D0vGUkUCRxpv8o2rhSSVD3p8",
+  apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
   authDomain: "yousuf-ali-gaming.firebaseapp.com",
   projectId: "yousuf-ali-gaming",
   storageBucket: "yousuf-ali-gaming.firebasestorage.app",
@@ -99,6 +103,7 @@ const firebaseConfig = {
   measurementId: "G-KR3L6WSZ3X"
 };
 
+// Only this Firebase Auth UID is allowed in the dashboard.
 const ADMIN_UID = "gIsJxXOyGKhUhf6ontux2zJnF9N2";
 
 firebase.initializeApp(firebaseConfig);
@@ -111,10 +116,14 @@ const dashboard = document.getElementById("dashboard");
 const message = document.getElementById("message");
 const orderMessage = document.getElementById("orderMessage");
 const ordersBox = document.getElementById("orders");
+const loginButton = document.getElementById("loginButton");
+
+let loadingOrders = false;
 
 document.getElementById("loginForm").addEventListener(
   "submit", async function(event) {
     event.preventDefault();
+    loginButton.disabled = true;
     message.textContent = "Signing in...";
 
     try {
@@ -126,34 +135,44 @@ document.getElementById("loginForm").addEventListener(
       if (result.user.uid !== ADMIN_UID) {
         await auth.signOut();
         message.textContent = "Access denied: not the admin.";
-        return;
+      } else {
+        message.textContent = "Login successful.";
       }
-
-      message.textContent = "Login successful.";
     } catch (error) {
+      console.error("Login error:", error);
       message.textContent =
-        "Login failed. Check your email and password.";
+        "Login failed. Check your email, password and connection.";
+    } finally {
+      loginButton.disabled = false;
     }
   }
 );
 
 auth.onAuthStateChanged(async function(user) {
   if (user && user.uid === ADMIN_UID) {
-    loginBox.style.display = "none";
-    dashboard.style.display = "block";
+    loginBox.classList.add("hidden");
+    dashboard.classList.remove("hidden");
     await loadOrders();
   } else {
-    loginBox.style.display = "block";
-    dashboard.style.display = "none";
+    loginBox.classList.remove("hidden");
+    dashboard.classList.add("hidden");
     ordersBox.replaceChildren();
+    orderMessage.textContent = "";
   }
 });
 
 async function loadOrders() {
+  if (loadingOrders) return;
+  loadingOrders = true;
   ordersBox.replaceChildren();
   orderMessage.textContent = "Loading orders...";
 
   try {
+    if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
+      orderMessage.textContent = "Admin authorization required.";
+      return;
+    }
+
     const snapshot = await db.collection("orders")
       .orderBy("createdAt", "desc").get();
 
@@ -187,6 +206,7 @@ async function loadOrders() {
       addText("Status", data.status || "Pending");
 
       const select = document.createElement("select");
+      select.setAttribute("aria-label", "Order status");
 
       ["Pending", "Processing", "Completed"].forEach(
         function(status) {
@@ -201,6 +221,7 @@ async function loadOrders() {
       );
 
       const save = document.createElement("button");
+      save.type = "button";
       save.textContent = "Update Status";
 
       save.addEventListener("click", async function() {
@@ -210,21 +231,21 @@ async function loadOrders() {
           return;
         }
 
+        const newStatus = select.value;
         save.disabled = true;
         orderMessage.textContent = "Updating order...";
 
         try {
-          const newStatus = select.value;
-
-          // Update the private order first.
+          // Update the private order.
           await db.collection("orders").doc(doc.id).update({
             status: newStatus
           });
 
-          const publicRef = db.collection("publicTopUps").doc(doc.id);
+          const publicRef =
+            db.collection("publicTopUps").doc(doc.id);
 
           if (newStatus === "Completed") {
-            // Publish only safe, non-identifying information.
+            // Only non-identifying fields are published.
             await publicRef.set({
               package: String(data.package || "Top-Up"),
               total: Number(data.total) || 0,
@@ -234,19 +255,18 @@ async function loadOrders() {
                 firebase.firestore.FieldValue.serverTimestamp()
             });
           } else {
-            // Hide an order from public activity if it is no longer
-            // marked Completed.
+            // Remove it from public activity if not completed.
             await publicRef.delete();
           }
 
           orderMessage.textContent =
-            "Order status updated. Public activity synced.";
+            "Status updated and public activity synced.";
           await loadOrders();
 
         } catch (error) {
           console.error("Status update error:", error);
           orderMessage.textContent =
-            "Update or public sync failed. Check Firestore Rules.";
+            "Status/public sync failed. Check Firestore Rules.";
           save.disabled = false;
         }
       });
@@ -259,7 +279,9 @@ async function loadOrders() {
   } catch (error) {
     console.error("Load orders error:", error);
     orderMessage.textContent =
-      "Could not load orders. Check Firestore Rules.";
+      "Could not load orders. Check Firestore Rules and connection.";
+  } finally {
+    loadingOrders = false;
   }
 }
 
