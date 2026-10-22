@@ -230,27 +230,41 @@ grid.addEventListener("click",e=>{
 });
 document.getElementById("cancelOrder").addEventListener("click",()=>dialog.close());
 
+
 document.getElementById("orderForm").addEventListener("submit", async e => {
   e.preventDefault();
-  if (!chosen) return;
-  const btn = e.submitter;
-  if (btn) btn.disabled = true;
+
+  if (!chosen) {
+    alert("Please select a diamond package first.");
+    return;
+  }
+
+  const form = document.getElementById("orderForm");
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  if (submitBtn) submitBtn.disabled = true;
+
   try {
     const loadScript = src => new Promise((resolve, reject) => {
       const s = document.createElement("script");
       s.src = src;
       s.onload = resolve;
-      s.onerror = reject;
+      s.onerror = () => reject(new Error("Firebase SDK failed to load"));
       document.head.appendChild(s);
     });
-    if (!window.firebase) {
+
+    if (!window.firebase || !firebase.initializeApp) {
       await loadScript(
         "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"
       );
+    }
+
+    if (!firebase.firestore) {
       await loadScript(
         "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"
       );
     }
+
     const firebaseConfig = {
       apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
       authDomain: "yousuf-ali-gaming.firebaseapp.com",
@@ -259,34 +273,45 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
       messagingSenderId: "736038389268",
       appId: "1:736038389268:web:b717a07cb43076bd928901"
     };
+
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
-    const db = firebase.firestore();
-    await db.collection("orders").add({
-      uid: document.getElementById("uid").value.trim(),
-      server: document.getElementById("server").value,
-      contact: document.getElementById("contactNumber").value.trim(),
-      paymentMethod: document.getElementById("paymentMethod").value,
-      transactionId: document.getElementById("transactionId").value.trim(),
+
+    const getValue = id => {
+      const field = document.getElementById(id);
+      if (!field) throw new Error("Missing form field: " + id);
+      return field.value.trim();
+    };
+
+    const order = {
+      uid: getValue("uid"),
+      server: getValue("server"),
+      contact: getValue("contactNumber"),
+      paymentMethod: getValue("paymentMethod"),
+      transactionId: getValue("transactionId"),
       package: chosen.name,
       total: chosen.price,
       status: "Pending",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    alert("Order submitted! Please wait for payment verification.");
-    document.getElementById("orderForm").reset();
+    };
+
+    await firebase.firestore()
+      .collection("orders")
+      .add(order);
+
+    alert("Order submitted successfully!");
+    form.reset();
     dialog.close();
+
   } catch (error) {
-    console.error(error);
-    alert("Order submit failed. Please try again later.");
+    console.error("Order error:", error);
+    alert("Order failed: " + (error.message || error.code || "Unknown error"));
   } finally {
-    const submitBtn = document.querySelector(
-      '#orderForm button[type="submit"]'
-    );
     if (submitBtn) submitBtn.disabled = false;
   }
 });
+
 document.getElementById("year").textContent=new Date().getFullYear();
 </script>
 </body>
