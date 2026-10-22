@@ -201,6 +201,18 @@ input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #35415b
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
+  const buyerFirebaseConfig = {
+  apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
+  authDomain: "yousuf-ali-gaming.firebaseapp.com",
+  projectId: "yousuf-ali-gaming",
+  storageBucket: "yousuf-ali-gaming.firebasestorage.app",
+  messagingSenderId: "736038389268",
+  appId: "1:736038389268:web:b717a07cb43076bd928901"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(buyerFirebaseConfig);
+}
 const packages = [
   {name:"50 Diamonds",amount:"50 DM",price:64,tag:"Starter"},
   {name:"70 Diamonds",amount:"70 DM",price:85},
