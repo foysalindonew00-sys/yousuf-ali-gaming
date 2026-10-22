@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>YOUSUF ALI Gaming — Admin</title>
+
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       padding: 18px;
@@ -14,8 +16,10 @@
       color: #eef2ff;
       font-family: Arial, sans-serif;
     }
+
     .wrap { max-width: 760px; margin: auto; }
     h1 { color: #00d4ff; font-size: 25px; }
+
     .panel, .order {
       background: #151d32;
       border: 1px solid #293653;
@@ -24,6 +28,7 @@
       margin: 14px 0;
       overflow-wrap: anywhere;
     }
+
     input, select, button {
       width: 100%;
       padding: 12px;
@@ -32,10 +37,12 @@
       border: 1px solid #394967;
       font-size: 15px;
     }
+
     input, select {
       background: #0b1020;
       color: white;
     }
+
     button {
       background: #00c9ef;
       color: #07111d;
@@ -43,14 +50,26 @@
       font-weight: bold;
       cursor: pointer;
     }
-    button:disabled { opacity: .55; }
+
+    button:disabled { opacity: .55; cursor: wait; }
     .secondary { background: #293653; color: white; }
     .status { color: #a5f3fc; overflow-wrap: anywhere; }
     .order p { margin: 9px 0; }
     .hidden { display: none; }
     small { color: #b9c6df; }
+
+    .order h3 {
+      color: #00d4ff;
+      overflow-wrap: anywhere;
+    }
+
+    .live {
+      color: #86efac;
+      font-size: 13px;
+    }
   </style>
 </head>
+
 <body>
 <div class="wrap">
   <h1>YOUSUF ALI Gaming</h1>
@@ -58,29 +77,41 @@
 
   <section id="login" class="panel">
     <h2>Admin Login</h2>
+
     <form id="loginForm">
       <input id="email" type="email"
-        placeholder="Admin email" autocomplete="username" required>
+        placeholder="Admin email"
+        autocomplete="username" required>
+
       <input id="password" type="password"
-        placeholder="Password" autocomplete="current-password" required>
+        placeholder="Password"
+        autocomplete="current-password" required>
+
       <button id="loginButton" type="submit">Login</button>
     </form>
+
     <p id="message" class="status" aria-live="polite"></p>
   </section>
 
   <section id="dashboard" class="hidden">
     <div class="panel">
       <h2>Orders</h2>
+
+      <p class="live">● Live order updates enabled</p>
+
       <p id="orderMessage" class="status" aria-live="polite">
-        Loading orders...
+        Connecting...
       </p>
+
       <button id="refresh" type="button" class="secondary">
         Refresh Orders
       </button>
+
       <button id="logout" type="button" class="secondary">
         Logout
       </button>
     </div>
+
     <div id="orders"></div>
   </section>
 </div>
@@ -92,7 +123,6 @@
 <script>
 "use strict";
 
-// Firebase project configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
   authDomain: "yousuf-ali-gaming.firebaseapp.com",
@@ -103,7 +133,6 @@ const firebaseConfig = {
   measurementId: "G-KR3L6WSZ3X"
 };
 
-// Only this Firebase Auth UID is allowed in the dashboard.
 const ADMIN_UID = "gIsJxXOyGKhUhf6ontux2zJnF9N2";
 
 firebase.initializeApp(firebaseConfig);
@@ -118,11 +147,182 @@ const orderMessage = document.getElementById("orderMessage");
 const ordersBox = document.getElementById("orders");
 const loginButton = document.getElementById("loginButton");
 
-let loadingOrders = false;
+let unsubscribeOrders = null;
+let renderingOrders = false;
+
+function stopLiveOrders() {
+  if (unsubscribeOrders) {
+    unsubscribeOrders();
+    unsubscribeOrders = null;
+  }
+}
+
+function addText(card, label, value) {
+  const p = document.createElement("p");
+  p.textContent = label + ": " +
+    (value == null || value === "" ? "Not provided" : String(value));
+  card.appendChild(p);
+}
+
+function renderOrders(snapshot) {
+  renderingOrders = true;
+  const fragment = document.createDocumentFragment();
+
+  if (snapshot.empty) {
+    ordersBox.replaceChildren();
+    orderMessage.textContent = "No orders found yet.";
+    renderingOrders = false;
+    return;
+  }
+
+  snapshot.forEach(function(doc) {
+    const data = doc.data();
+    const card = document.createElement("article");
+    card.className = "order";
+
+    const heading = document.createElement("h3");
+    heading.textContent = "Order";
+    card.appendChild(heading);
+
+    addText(card, "Order ID", doc.id);
+    addText(card, "Player UID", data.uid);
+    addText(card, "Package", data.package);
+    addText(card, "Server", data.server);
+    addText(card, "Contact", data.contact);
+    addText(card, "Total", data.total);
+    addText(card, "Payment Method", data.paymentMethod);
+    addText(card, "TrxID", data.transactionId);
+    addText(card, "Status", data.status || "Pending");
+
+    const select = document.createElement("select");
+    select.setAttribute("aria-label", "Order status");
+
+    const statuses = ["Pending", "Processing", "Completed"];
+
+    statuses.forEach(function(status) {
+      const option = document.createElement("option");
+      option.value = status;
+      option.textContent = status;
+
+      if ((data.status || "Pending") === status) {
+        option.selected = true;
+      }
+
+      select.appendChild(option);
+    });
+
+    // Preserve an unexpected existing status rather than silently
+    // displaying a different status in the selector.
+    if (!statuses.includes(data.status || "Pending")) {
+      const option = document.createElement("option");
+      option.value = data.status;
+      option.textContent = data.status;
+      option.selected = true;
+      select.appendChild(option);
+    }
+
+    const save = document.createElement("button");
+    save.type = "button";
+    save.textContent = "Update Status";
+
+    save.addEventListener("click", async function() {
+      if (!auth.currentUser ||
+          auth.currentUser.uid !== ADMIN_UID) {
+        orderMessage.textContent = "Admin authorization required.";
+        return;
+      }
+
+      const newStatus = select.value;
+
+      if (!statuses.includes(newStatus)) {
+        orderMessage.textContent = "Invalid order status.";
+        return;
+      }
+
+      save.disabled = true;
+      select.disabled = true;
+      orderMessage.textContent = "Updating order...";
+
+      try {
+        // Save the private order status first.
+        await db.collection("orders").doc(doc.id).update({
+          status: newStatus
+        });
+
+        const publicRef = db.collection("publicTopUps").doc(doc.id);
+
+        if (newStatus === "Completed") {
+          // Publish only non-identifying order information.
+          await publicRef.set({
+            package: String(data.package || "Top-Up"),
+            total: Number(data.total) || 0,
+            status: "success",
+            verified: true,
+            completedAt:
+              firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } else {
+          // Remove this order from public activity when reopened.
+          await publicRef.delete();
+        }
+
+        orderMessage.textContent =
+          "Order status saved. Public activity sync completed.";
+
+      } catch (error) {
+        console.error("Status update error:", error);
+
+        orderMessage.textContent =
+          "Update failed. Check Firestore Rules and connection.";
+
+      } finally {
+        save.disabled = false;
+        select.disabled = false;
+      }
+    });
+
+    card.appendChild(select);
+    card.appendChild(save);
+    fragment.appendChild(card);
+  });
+
+  ordersBox.replaceChildren(fragment);
+  orderMessage.textContent =
+    snapshot.size + " order(s) — live updates active";
+
+  renderingOrders = false;
+}
+
+function startLiveOrders() {
+  stopLiveOrders();
+
+  if (!auth.currentUser ||
+      auth.currentUser.uid !== ADMIN_UID) {
+    orderMessage.textContent = "Admin authorization required.";
+    return;
+  }
+
+  ordersBox.replaceChildren();
+  orderMessage.textContent = "Connecting to live orders...";
+
+  unsubscribeOrders = db.collection("orders")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(
+      function(snapshot) {
+        renderOrders(snapshot);
+      },
+      function(error) {
+        console.error("Live orders error:", error);
+        orderMessage.textContent =
+          "Could not load live orders. Check Rules and connection.";
+      }
+    );
+}
 
 document.getElementById("loginForm").addEventListener(
   "submit", async function(event) {
     event.preventDefault();
+
     loginButton.disabled = true;
     message.textContent = "Signing in...";
 
@@ -148,12 +348,13 @@ document.getElementById("loginForm").addEventListener(
   }
 );
 
-auth.onAuthStateChanged(async function(user) {
+auth.onAuthStateChanged(function(user) {
   if (user && user.uid === ADMIN_UID) {
     loginBox.classList.add("hidden");
     dashboard.classList.remove("hidden");
-    await loadOrders();
+    startLiveOrders();
   } else {
+    stopLiveOrders();
     loginBox.classList.remove("hidden");
     dashboard.classList.add("hidden");
     ordersBox.replaceChildren();
@@ -161,137 +362,25 @@ auth.onAuthStateChanged(async function(user) {
   }
 });
 
-async function loadOrders() {
-  if (loadingOrders) return;
-  loadingOrders = true;
-  ordersBox.replaceChildren();
-  orderMessage.textContent = "Loading orders...";
-
-  try {
-    if (!auth.currentUser || auth.currentUser.uid !== ADMIN_UID) {
-      orderMessage.textContent = "Admin authorization required.";
-      return;
-    }
-
-    const snapshot = await db.collection("orders")
-      .orderBy("createdAt", "desc").get();
-
-    if (snapshot.empty) {
-      orderMessage.textContent = "No orders found yet.";
-      return;
-    }
-
-    orderMessage.textContent = snapshot.size + " order(s)";
-
-    snapshot.forEach(function(doc) {
-      const data = doc.data();
-      const card = document.createElement("article");
-      card.className = "order";
-
-      function addText(label, value) {
-        const p = document.createElement("p");
-        p.textContent = label + ": " +
-          (value == null ? "Not provided" : String(value));
-        card.appendChild(p);
-      }
-
-      addText("Order ID", doc.id);
-      addText("Player UID", data.uid);
-      addText("Package", data.package);
-      addText("Server", data.server);
-      addText("Contact", data.contact);
-      addText("Total", data.total);
-      addText("Payment Method", data.paymentMethod);
-      addText("TrxID", data.transactionId);
-      addText("Status", data.status || "Pending");
-
-      const select = document.createElement("select");
-      select.setAttribute("aria-label", "Order status");
-
-      ["Pending", "Processing", "Completed"].forEach(
-        function(status) {
-          const option = document.createElement("option");
-          option.value = status;
-          option.textContent = status;
-          if ((data.status || "Pending") === status) {
-            option.selected = true;
-          }
-          select.appendChild(option);
-        }
-      );
-
-      const save = document.createElement("button");
-      save.type = "button";
-      save.textContent = "Update Status";
-
-      save.addEventListener("click", async function() {
-        if (!auth.currentUser ||
-            auth.currentUser.uid !== ADMIN_UID) {
-          orderMessage.textContent = "Admin authorization required.";
-          return;
-        }
-
-        const newStatus = select.value;
-        save.disabled = true;
-        orderMessage.textContent = "Updating order...";
-
-        try {
-          // Update the private order.
-          await db.collection("orders").doc(doc.id).update({
-            status: newStatus
-          });
-
-          const publicRef =
-            db.collection("publicTopUps").doc(doc.id);
-
-          if (newStatus === "Completed") {
-            // Only non-identifying fields are published.
-            await publicRef.set({
-              package: String(data.package || "Top-Up"),
-              total: Number(data.total) || 0,
-              status: "success",
-              verified: true,
-              completedAt:
-                firebase.firestore.FieldValue.serverTimestamp()
-            });
-          } else {
-            // Remove it from public activity if not completed.
-            await publicRef.delete();
-          }
-
-          orderMessage.textContent =
-            "Status updated and public activity synced.";
-          await loadOrders();
-
-        } catch (error) {
-          console.error("Status update error:", error);
-          orderMessage.textContent =
-            "Status/public sync failed. Check Firestore Rules.";
-          save.disabled = false;
-        }
-      });
-
-      card.appendChild(select);
-      card.appendChild(save);
-      ordersBox.appendChild(card);
-    });
-
-  } catch (error) {
-    console.error("Load orders error:", error);
-    orderMessage.textContent =
-      "Could not load orders. Check Firestore Rules and connection.";
-  } finally {
-    loadingOrders = false;
-  }
-}
-
 document.getElementById("refresh").addEventListener(
-  "click", loadOrders
+  "click", function() {
+    if (auth.currentUser &&
+        auth.currentUser.uid === ADMIN_UID) {
+      startLiveOrders();
+    }
+  }
 );
 
 document.getElementById("logout").addEventListener(
   "click", async function() {
-    await auth.signOut();
+    stopLiveOrders();
+
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error("Logout error:", error);
+      orderMessage.textContent = "Could not log out. Try again.";
+    }
   }
 );
 </script>
