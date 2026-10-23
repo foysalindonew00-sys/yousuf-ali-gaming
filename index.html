@@ -306,19 +306,30 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
       return field.value.trim();
     };
 
+    
+    const currentUser = firebase.auth().currentUser;
+
+    if (!currentUser) {
+      alert("Please login or register before placing an order.");
+      window.location.href = "login.html";
+      return;
+    }
+
     const order = {
       uid: getValue("uid"),
+      customerUid: currentUser.uid,
       server: getValue("server"),
       contact: getValue("contactNumber"),
       paymentMethod: getValue("paymentMethod"),
-      transactionId: getValue("transactionId"), 
+      transactionId: getValue("transactionId"),
 
       package: chosen.name,
-      amount: chosen.amount,
-      total: chosen.price,
+      amount: String(chosen.amount),
+      total: Number(chosen.price),
       status: "Pending",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
+
 
     await firebase.firestore()
       .collection("orders")
