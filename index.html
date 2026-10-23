@@ -385,9 +385,11 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
       return field.value.trim();
     };
 
-    
-    const currentUser = firebase.auth().currentUser;
+    await new Promise(resolve => {
+  firebase.auth().onAuthStateChanged(resolve);
+});
 
+const currentUser = firebase.auth().currentUser;
     if (!currentUser) {
       alert("Please login or register before placing an order.");
       window.location.href = "login.html";
