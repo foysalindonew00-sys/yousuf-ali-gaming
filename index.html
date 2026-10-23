@@ -419,5 +419,24 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
 
 document.getElementById("year").textContent=new Date().getFullYear();
 </script>
+  <div id="orderSuccessPopup" class="success-popup" style="display:none;">
+  <div class="success-icon">✓</div>
+
+  <h2>ORDER SUBMITTED SUCCESSFULLY!</h2>
+
+  <p>Your order has been placed successfully.</p>
+  <p>Please wait while we process your order.</p>
+
+  <div class="success-features">
+    <span>🛡️ Safe & Secure</span>
+    <span>⚡ Fast Process</span>
+    <span>✓ Trusted Service</span>
+  </div>
+
+  <button class="success-home"
+    onclick="window.location.href='index.html'">
+    🏠 BACK TO HOME
+  </button>
+</div>
 </body>
 </html>
