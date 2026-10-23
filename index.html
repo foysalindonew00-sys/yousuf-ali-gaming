@@ -399,8 +399,6 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
       status: "Pending",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-
-
     await firebase.firestore()
       .collection("orders")
       .add(order);
@@ -410,8 +408,6 @@ if (popup) {
   popup.style.display = "block";
 }
     form.reset();
-    dialog.close();
-
   } catch (error) {
     console.error("Order error:", error);
     alert("Order failed: " + (error.message || error.code || "Unknown error"));
