@@ -404,8 +404,11 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
     await firebase.firestore()
       .collection("orders")
       .add(order);
-
-    alert("Order submitted successfully!");
+    
+    const popup = document.getElementById("orderSuccessPopup");
+if (popup) {
+  popup.style.display = "block";
+}
     form.reset();
     dialog.close();
 
