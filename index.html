@@ -272,10 +272,15 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
         "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"
       );
     }
-
-    if (!firebase.firestore) {
+        if (!firebase.firestore) {
       await loadScript(
         "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"
+      );
+    }
+
+    if (!firebase.auth) {
+      await loadScript(
+        "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"
       );
     }
 
