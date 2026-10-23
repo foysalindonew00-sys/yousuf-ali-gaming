@@ -245,7 +245,7 @@
     $("ordersList").innerHTML = '<div class="empty">Loading your orders…</div>';
     try {
       // This query requires Firestore Rules to allow a user to read only documents whose uid equals request.auth.uid.
-      const snapshot = await db.collection("orders").where("uid", "==", user.uid).get();
+      const snapshot = await db.collection("orders").where("customerUid", "==", user.uid).get();
       $("ordersList").replaceChildren();
       if (snapshot.empty) {
         $("ordersList").innerHTML = '<div class="empty">No orders found for this account yet.</div>';
