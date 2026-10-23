@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <title>Login / Register | YOUSUF ALI Gaming</title>
+  <style>
+    :root{color-scheme:dark;--bg:#07111f;--panel:#101d30;--line:#243750;--text:#f4f7ff;--muted:#a9b7cc;--blue:#39a0ff;--cyan:#55e6ff;--red:#ff536b;--green:#42d6a4}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#142c4a 0,#07111f 58%);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);padding:24px 14px}
+    .wrap{max-width:980px;margin:0 auto}.brand{text-align:center;margin:10px auto 24px}.logo{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--blue),#6b5cff);font-size:25px;font-weight:900;box-shadow:0 10px 35px #1b80ff38}.brand h1{margin:12px 0 4px;font-size:clamp(23px,5vw,34px);letter-spacing:.5px}.brand p{margin:0;color:var(--muted)}
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.card{background:#101d30ee;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 18px 50px #0003}.tabs{display:flex;gap:8px;padding:5px;border:1px solid var(--line);background:#091525;border-radius:12px;margin-bottom:20px}.tab{flex:1;border:0;border-radius:9px;background:transparent;color:var(--muted);padding:11px 8px;font-weight:800;cursor:pointer}.tab.active{background:linear-gradient(110deg,#1877dc,#5a65ef);color:#fff}
+    h2{font-size:22px;margin:0 0 7px}.sub{color:var(--muted);font-size:14px;margin:0 0 18px;line-height:1.5}label{display:block;font-size:13px;color:#d7e3f5;font-weight:700;margin:13px 0 7px}input{width:100%;padding:13px 14px;border-radius:11px;border:1px solid #30445f;background:#081525;color:var(--text);font-size:15px;outline:none}input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #39a0ff20}.btn{width:100%;border:0;border-radius:11px;padding:13px 14px;background:linear-gradient(110deg,#1684ed,#5b5ce8);color:white;font-size:15px;font-weight:800;cursor:pointer;margin-top:17px}.btn:disabled{opacity:.6;cursor:wait}.linkbtn{background:none;border:0;color:var(--cyan);cursor:pointer;padding:12px 0 0;font-size:13px}.notice{display:none;margin-top:13px;padding:11px 12px;border-radius:10px;font-size:13px;line-height:1.45;overflow-wrap:anywhere}.notice.show{display:block}.notice.error{background:#4a1d2a;color:#ffdce2;border:1px solid #85364b}.notice.ok{background:#103c35;color:#c9fff0;border:1px solid #267d6a}.feature{margin:0;padding:0;list-style:none;display:grid;gap:13px}.feature li{display:flex;gap:11px;color:#d9e5f5;line-height:1.45;font-size:14px}.check{flex:0 0 27px;height:27px;border-radius:9px;display:grid;place-items:center;background:#123b4a;color:var(--cyan)}.small{font-size:12px;color:var(--muted);line-height:1.5;margin-top:18px}.account{display:none}.account.show{display:block}.userbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--line);margin-bottom:15px}.pill{font-size:12px;color:#bdf8e4;background:#103c35;padding:6px 10px;border-radius:99px}.logout{border:1px solid var(--line);background:#0a1727;color:#fff;padding:8px 12px;border-radius:9px;cursor:pointer}.order{border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:10px;background:#0a1727}.orderhead{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:800}.meta{font-size:13px;color:var(--muted);line-height:1.6;margin-top:8px;overflow-wrap:anywhere}.empty{padding:18px;text-align:center;border:1px dashed #38506d;border-radius:12px;color:var(--muted);font-size:14px}.hidden{display:none!important}
+    @media(max-width:760px){.layout{grid-template-columns:1fr}.card{padding:18px}.brand{margin-bottom:18px}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand">
+    <div class="logo">YA</div>
+    <h1>YOUSUF ALI Gaming</h1>
+    <p>Customer account · Secure login · My orders</p>
+  </header>
+
+  <div class="layout">
+    <section class="card" id="authCard">
+      <div class="tabs">
+        <button class="tab active" id="loginTab" type="button">Login</button>
+        <button class="tab" id="registerTab" type="button">Create account</button>
+      </div>
+      <form id="authForm">
+        <h2 id="formTitle">Welcome back</h2>
+        <p class="sub" id="formSub">Login to continue to your gaming orders.</p>
+        <div id="nameWrap" class="hidden">
+          <label for="fullName">Full name</label>
+          <input id="fullName" type="text" autocomplete="name" maxlength="80" placeholder="Enter your name">
+        </div>
+        <label for="email">Email address</label>
+        <input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="At least 6 characters">
+        <div id="confirmWrap" class="hidden">
+          <label for="confirmPassword">Confirm password</label>
+          <input id="confirmPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Enter password again">
+        </div>
+        <button class="btn" id="submitBtn" type="submit">Login</button>
+        <button class="linkbtn" id="forgotBtn" type="button">Forgot password?</button>
+        <div class="notice" id="authNotice" role="status" aria-live="polite"></div>
+      </form>
+      <p class="small">Never share your password or verification emails with anyone. Use an email address you can access.</p>
+    </section>
+
+    <section class="card">
+      <h2>Your account, your orders</h2>
+      <p class="sub">Sign in to view the order history saved to your account.</p>
+      <ul class="feature">
+        <li><span class="check">✓</span><span><b>Login & registration</b><br>Make your own customer account.</span></li>
+        <li><span class="check">✓</span><span><b>Personal order history</b><br>See order details and status for your account.</span></li>
+        <li><span class="check">✓</span><span><b>Login-required checkout</b><br>The main website must also check login before accepting an order.</span></li>
+      </ul>
+      <p class="small">Security note: hiding buttons is not enough. Firebase Authentication and Firestore Security Rules must enforce account access on the server.</p>
+    </section>
+  </div>
+
+  <section class="card account" id="accountCard" style="margin-top:18px">
+    <div class="userbar">
+      <div><h2 style="margin-bottom:5px">My Orders</h2><div class="meta" id="signedInAs"></div></div>
+      <button class="logout" id="logoutBtn" type="button">Log out</button>
+    </div>
+    <p class="sub">Only orders linked to your signed-in account should appear here.</p>
+    <div id="ordersList"><div class="empty">Loading your orders…</div></div>
+    <div class="notice" id="ordersNotice" role="status" aria-live="polite"></div>
+    <button class="btn" id="shopBtn" type="button">Go to Diamond Packages</button>
+  </section>
+  <p class="small" style="text-align:center">YOUSUF ALI Gaming · Customer account page</p>
+</div>
+
+<!-- Firebase compat SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  // Firebase Web App config for the existing YOUSUF ALI Gaming project.
+  // The other values below match the existing YOUSUF ALI Gaming Firebase project.
+  const firebaseConfig = {
+    apiKey: "AIzaSyDyRX9oCF2D0vGUkUcrxpv8o2rhSSVD3p8",
+    authDomain: "yousuf-ali-gaming.firebaseapp.com",
+    projectId: "yousuf-ali-gaming",
+    storageBucket: "yousuf-ali-gaming.firebasestorage.app",
+    messagingSenderId: "736038389268",
+    appId: "1:736038389268:web:b717a07cb43076bd928901",
+    measurementId: "G-KR3L6WSZ3X"
+  };
+
+  const $ = id => document.getElementById(id);
+  const authCard = $("authCard"), accountCard = $("accountCard");
+  const authNotice = $("authNotice"), ordersNotice = $("ordersNotice");
+  let mode = "login", auth = null, db = null;
+
+  function showNotice(el, message, kind) {
+    el.textContent = message;
+    el.className = "notice show " + (kind || "error");
+  }
+  function clearNotice(el) { el.textContent = ""; el.className = "notice"; }
+  function friendlyError(error) {
+    const code = error && error.code ? error.code : "";
+    const messages = {
+      "auth/invalid-email": "Please enter a valid email address.",
+      "auth/user-not-found": "No account found for this email. Register first.",
+      "auth/wrong-password": "Incorrect email or password.",
+      "auth/invalid-credential": "Email or password is incorrect.",
+      "auth/email-already-in-use": "This email already has an account. Please login.",
+      "auth/weak-password": "Choose a stronger password with at least 6 characters.",
+      "auth/too-many-requests": "Too many attempts. Please wait and try again.",
+      "auth/network-request-failed": "Network error. Check your internet connection.",
+      "auth/operation-not-allowed": "Email/Password sign-in is not enabled in Firebase Authentication.",
+      "permission-denied": "Firestore permission denied. The Firestore Rules need to be configured safely."
+    };
+    return messages[code] || (error && error.message) || "Something went wrong. Please try again.";
+  }
+
+  function setMode(next) {
+    mode = next;
+    const registering = mode === "register";
+    $("loginTab").classList.toggle("active", !registering);
+    $("registerTab").classList.toggle("active", registering);
+    $("nameWrap").classList.toggle("hidden", !registering);
+    $("confirmWrap").classList.toggle("hidden", !registering);
+    $("forgotBtn").classList.toggle("hidden", registering);
+    $("formTitle").textContent = registering ? "Create your account" : "Welcome back";
+    $("formSub").textContent = registering ? "Register to keep your orders linked to your account." : "Login to continue to your gaming orders.";
+    $("submitBtn").textContent = registering ? "Create account" : "Login";
+    $("password").autocomplete = registering ? "new-password" : "current-password";
+    clearNotice(authNotice);
+  }
+  $("loginTab").addEventListener("click", () => setMode("login"));
+  $("registerTab").addEventListener("click", () => setMode("register"));
+
+  function initFirebase() {
+    if (firebaseConfig.apiKey === "YOUR_API_KEY_HERE" || !firebaseConfig.apiKey.trim()) {
+      showNotice(authNotice, "Firebase configuration is missing. Check the firebaseConfig section.", "error");
+      $("submitBtn").disabled = true;
+      return false;
+    }
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.firestore();
+      auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+      return true;
+    } catch (error) {
+      showNotice(authNotice, friendlyError(error), "error");
+      return false;
+    }
+  }
+
+  $("authForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    clearNotice(authNotice);
+    if (!auth && !initFirebase()) return;
+    const email = $("email").value.trim();
+    const password = $("password").value;
+    const button = $("submitBtn");
+    if (mode === "register") {
+      const name = $("fullName").value.trim();
+      const confirm = $("confirmPassword").value;
+      if (!name) return showNotice(authNotice, "Please enter your name.", "error");
+      if (password !== confirm) return showNotice(authNotice, "Passwords do not match.", "error");
+      if (password.length < 6) return showNotice(authNotice, "Password must be at least 6 characters.", "error");
+      button.disabled = true;
+      try {
+        const credential = await auth.createUserWithEmailAndPassword(email, password);
+        await credential.user.updateProfile({displayName: name});
+        // Optional profile record; order access must still be protected by Firestore Rules.
+        await db.collection("customers").doc(credential.user.uid).set({
+          uid: credential.user.uid,
+          name: name,
+          email: email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, {merge: true});
+        showNotice(authNotice, "Account created successfully.", "ok");
+      } catch (error) {
+        showNotice(authNotice, friendlyError(error), "error");
+      } finally { button.disabled = false; }
+    } else {
+      button.disabled = true;
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        showNotice(authNotice, friendlyError(error), "error");
+      } finally { button.disabled = false; }
+    }
+  });
+
+  $("forgotBtn").addEventListener("click", async () => {
+    clearNotice(authNotice);
+    if (!auth && !initFirebase()) return;
+    const email = $("email").value.trim();
+    if (!email) return showNotice(authNotice, "Enter your email address first.", "error");
+    try {
+      await auth.sendPasswordResetEmail(email);
+      showNotice(authNotice, "If this email is registered, a password-reset email has been sent.", "ok");
+    } catch (error) {
+      showNotice(authNotice, friendlyError(error), "error");
+    }
+  });
+
+  function safeText(value) {
+    return String(value == null ? "" : value);
+  }
+  function addOrderCard(orderId, data) {
+    const card = document.createElement("article");
+    card.className = "order";
+    const head = document.createElement("div");
+    head.className = "orderhead";
+    const title = document.createElement("span");
+    title.textContent = safeText(data.package || data.packageName || data.product || "Gaming order");
+    const status = document.createElement("span");
+    status.className = "pill";
+    status.textContent = safeText(data.status || "Pending");
+    head.append(title, status);
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    const lines = [
+      "Order ID: " + orderId,
+      "Server: " + safeText(data.server || "—"),
+      "Total: " + safeText(data.total != null ? data.total : (data.amount != null ? data.amount : "—")),
+      "Contact: " + safeText(data.contactNumber || data.contact || "—"),
+      "Payment: " + safeText(data.paymentMethod || "—"),
+      "Transaction ID: " + safeText(data.transactionId || "—")
+    ];
+    meta.textContent = lines.join("\n");
+    meta.style.whiteSpace = "pre-line";
+    card.append(head, meta);
+    $("ordersList").appendChild(card);
+  }
+
+  async function loadOrders(user) {
+    $("ordersList").replaceChildren();
+    clearNotice(ordersNotice);
+    $("signedInAs").textContent = user.displayName ? user.displayName + " · " + user.email : user.email;
+    $("ordersList").innerHTML = '<div class="empty">Loading your orders…</div>';
+    try {
+      // This query requires Firestore Rules to allow a user to read only documents whose uid equals request.auth.uid.
+      const snapshot = await db.collection("orders").where("uid", "==", user.uid).get();
+      $("ordersList").replaceChildren();
+      if (snapshot.empty) {
+        $("ordersList").innerHTML = '<div class="empty">No orders found for this account yet.</div>';
+        return;
+      }
+      const docs = [];
+      snapshot.forEach(doc => docs.push({id: doc.id, data: doc.data()}));
+      docs.sort((a,b) => {
+        const at = a.data.createdAt && a.data.createdAt.toMillis ? a.data.createdAt.toMillis() : 0;
+        const bt = b.data.createdAt && b.data.createdAt.toMillis ? b.data.createdAt.toMillis() : 0;
+        return bt - at;
+      });
+      docs.forEach(item => addOrderCard(item.id, item.data));
+    } catch (error) {
+      $("ordersList").replaceChildren();
+      $("ordersList").innerHTML = '<div class="empty">Could not load orders.</div>';
+      showNotice(ordersNotice, friendlyError(error) + " Ask the site owner to set secure Firestore Rules.", "error");
+    }
+  }
+
+  $("logoutBtn").addEventListener("click", async () => {
+    if (!auth) return;
+    try { await auth.signOut(); }
+    catch (error) { showNotice(ordersNotice, friendlyError(error), "error"); }
+  });
+  $("shopBtn").addEventListener("click", () => { window.location.href = "index.html"; });
+
+  if (initFirebase()) {
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        authCard.classList.add("hidden");
+        accountCard.classList.add("show");
+        loadOrders(user);
+      } else {
+        accountCard.classList.remove("show");
+        authCard.classList.remove("hidden");
+        $("ordersList").replaceChildren();
+        setMode("login");
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
