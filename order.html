@@ -415,7 +415,25 @@
       return;
     }
 
-    const customer = auth ? auth.currentUser : null;
+    if (!auth) {
+      showMessage("Authentication could not initialize. Please refresh and try again.", "error");
+      return;
+    }
+
+    // Wait for Firebase to restore the persisted session before checking
+    // currentUser; otherwise a signed-in buyer may be incorrectly rejected
+    // during the initial page load.
+    const customer = await new Promise(resolve => {
+      let unsubscribe = () => {};
+      unsubscribe = auth.onAuthStateChanged(user => {
+        unsubscribe();
+        resolve(user);
+      }, () => {
+        unsubscribe();
+        resolve(null);
+      });
+    });
+
     if (!customer) {
       showMessage("Please log in or register before placing an order.", "error");
       return;
