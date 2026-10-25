@@ -178,7 +178,7 @@
         await db.collection("customers").doc(credential.user.uid).set({
           uid: credential.user.uid,
           name: name,
-          email: email,
+          email: credential.user.email,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }, {merge: true});
         showNotice(authNotice, "Account created successfully.", "ok");
