@@ -26,7 +26,9 @@ jobs:
           java-version: 21
       - name: Install test dependencies
         run: npm install --prefix tests
-      - name: Report dependency vulnerabilities
+      - name: Apply compatible dependency security updates
+        run: npm audit fix --prefix tests
+      - name: Report remaining dependency vulnerabilities
         shell: bash
         run: |
           npm audit --prefix tests --json > /tmp/npm-audit.json || true
