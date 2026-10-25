@@ -1,0 +1,37 @@
+name: Firestore Rules Security Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [security-audit-2026-10-25]
+
+permissions:
+  contents: read
+
+jobs:
+  firestore-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Set up Java for Firebase Emulator
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install test dependencies
+        run: npm install --prefix tests
+      - name: Apply compatible dependency security updates
+        run: npm audit fix --prefix tests || true
+      - name: Report remaining dependency vulnerabilities
+        shell: bash
+        run: |
+          npm audit --prefix tests --json > /tmp/npm-audit.json || true
+          node -e 'const a=require("/tmp/npm-audit.json"); console.log(JSON.stringify({vulnerabilities:a.metadata?.vulnerabilities, packages:Object.entries(a.vulnerabilities||{}).map(([name,v])=>({name,severity:v.severity,isDirect:v.isDirect,fixAvailable:v.fixAvailable,via:v.via.map(x=>typeof x === "string" ? x : {name:x.name,title:x.title,range:x.range,url:x.url})}))},null,2))'
+      - name: Test Firestore rules in emulator
+        run: ./tests/node_modules/.bin/firebase emulators:exec --only firestore --project demo-yousuf-ali-gaming "npm --prefix tests run test:rules"
