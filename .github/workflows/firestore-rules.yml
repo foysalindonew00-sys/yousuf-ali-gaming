@@ -1,0 +1,26 @@
+name: Firestore Rules Security Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [security-audit-2026-10-25]
+
+permissions:
+  contents: read
+
+jobs:
+  firestore-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install test dependencies
+        run: npm install
+      - name: Test Firestore rules in emulator
+        run: npx firebase-tools emulators:exec --only firestore --project demo-yousuf-ali-gaming "npm run test:rules"
