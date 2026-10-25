@@ -290,6 +290,7 @@
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
@@ -328,6 +329,7 @@
 
   let selectedPackage = null;
   let db = null;
+  let auth = null;
 
   const packageGrid = document.getElementById("packageGrid");
   const totalPrice = document.getElementById("totalPrice");
@@ -398,6 +400,7 @@
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
+    auth = firebase.auth();
     db = firebase.firestore();
   } catch (error) {
     console.error("Firebase initialization error:", error);
@@ -409,6 +412,12 @@
 
     if (!selectedPackage) {
       showMessage("Please select one of the 12 packages first.", "error");
+      return;
+    }
+
+    const customer = auth ? auth.currentUser : null;
+    if (!customer) {
+      showMessage("Please log in or register before placing an order.", "error");
       return;
     }
 
@@ -433,6 +442,7 @@
 
     try {
       const docRef = await db.collection("orders").add({
+        customerUid: customer.uid,
         uid: uid,
         server: server,
         contact: contact,
