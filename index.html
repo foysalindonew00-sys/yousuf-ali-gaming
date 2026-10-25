@@ -245,7 +245,7 @@ input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #35415b
 
     <label for="uid">Free Fire Player UID</label>
     <input id="uid" name="uid" inputmode="numeric"
-      placeholder="Enter your UID" required maxlength="24">
+      placeholder="Enter your UID" required pattern="[0-9]{5,20}" maxlength="20" title="Enter a 5–20 digit Player UID">
 
     <label for="server">Server</label>
     <select id="server" name="server" required>
