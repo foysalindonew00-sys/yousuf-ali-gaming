@@ -1,0 +1,167 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.uid == 'gIsJxXOyGKhUhf6ontux2zJnF9N2';
+    }
+
+    function validOrderPrice() {
+      return (
+        request.resource.data.package == '50 Diamonds'
+        && request.resource.data.total == 64
+        && request.resource.data.amount == '50 DM'
+      ) || (
+        request.resource.data.package == '70 Diamonds'
+        && request.resource.data.total == 85
+        && request.resource.data.amount == '70 DM'
+      ) || (
+        request.resource.data.package == '90 Diamonds'
+        && request.resource.data.total == 110
+        && request.resource.data.amount == '90 DM'
+      ) || (
+        request.resource.data.package == '140 Diamonds'
+        && request.resource.data.total == 165
+        && request.resource.data.amount == '140 DM'
+      ) || (
+        request.resource.data.package == '355 Diamonds'
+        && request.resource.data.total == 415
+        && request.resource.data.amount == '355 DM'
+      ) || (
+        request.resource.data.package == '720 Diamonds'
+        && request.resource.data.total == 810
+        && request.resource.data.amount == '720 DM'
+      ) || (
+        request.resource.data.package == '1450 Diamonds'
+        && request.resource.data.total == 1620
+        && request.resource.data.amount == '1450 DM'
+      ) || (
+        request.resource.data.package == '2180 Diamonds'
+        && request.resource.data.total == 2350
+        && request.resource.data.amount == '2180 DM'
+      ) || (
+        request.resource.data.package == '3640 Diamonds'
+        && request.resource.data.total == 3850
+        && request.resource.data.amount == '3640 DM'
+      ) || (
+        request.resource.data.package == '7500 Diamonds'
+        && request.resource.data.total == 7700
+        && request.resource.data.amount == '7500 DM'
+      ) || (
+        request.resource.data.package == 'Weekly Membership'
+        && request.resource.data.total == 235
+        && request.resource.data.amount == 'Weekly'
+      ) || (
+        request.resource.data.package == 'Monthly Membership'
+        && request.resource.data.total == 710
+        && request.resource.data.amount == 'Monthly'
+      );
+    }
+
+    match /orders/{orderId} {
+      allow create: if request.auth != null
+        && request.resource.data.customerUid == request.auth.uid
+        && request.resource.data.keys().hasAll([
+          'uid', 'customerUid', 'server', 'contact',
+          'paymentMethod', 'transactionId', 'package',
+          'amount', 'total', 'status', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'uid', 'customerUid', 'server', 'contact',
+          'paymentMethod', 'transactionId', 'package',
+          'amount', 'total', 'status', 'createdAt'
+        ])
+        && request.resource.data.uid is string
+        && request.resource.data.uid.size() >= 5
+        && request.resource.data.uid.size() <= 24
+        && request.resource.data.customerUid is string
+        && request.resource.data.server in [
+          'Bangladesh', 'Indonesia', 'Thailand',
+          'Singapore', 'Other'
+        ]
+        && request.resource.data.contact is string
+        && request.resource.data.contact.size() >= 5
+        && request.resource.data.contact.size() <= 20
+        && request.resource.data.paymentMethod in [
+          'bKash', 'Nagad', 'Rocket'
+        ]
+        && request.resource.data.transactionId is string
+        && request.resource.data.transactionId.size() >= 1
+        && request.resource.data.transactionId.size() <= 100
+        && validOrderPrice()
+        && request.resource.data.status == 'Pending'
+        && request.resource.data.createdAt == request.time;
+
+      allow read: if isAdmin()
+        || (
+          request.auth != null
+          && resource.data.customerUid == request.auth.uid
+        );
+
+      allow update, delete: if isAdmin();
+    }
+
+    match /customers/{customerId} {
+      allow create: if request.auth != null
+        && request.auth.uid == customerId
+        && request.resource.data.keys().hasAll([
+          'uid', 'name', 'email', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'uid', 'name', 'email', 'createdAt'
+        ])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.email is string
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.createdAt == request.time;
+
+      allow read: if request.auth != null
+        && request.auth.uid == customerId;
+
+      allow update: if request.auth != null
+        && request.auth.uid == customerId
+        && request.resource.data.keys().hasAll([
+          'uid', 'name', 'email', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'uid', 'name', 'email', 'createdAt'
+        ])
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 80;
+
+      allow delete: if isAdmin();
+    }
+
+    match /publicTopUps/{orderId} {
+      allow read: if true;
+
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasAll([
+          'package', 'total', 'status',
+          'verified', 'completedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'package', 'total', 'status',
+          'verified', 'completedAt'
+        ])
+        && request.resource.data.package is string
+        && request.resource.data.package.size() <= 50
+        && request.resource.data.total is number
+        && request.resource.data.total >= 0
+        && request.resource.data.status == 'success'
+        && request.resource.data.verified == true
+        && request.resource.data.completedAt == request.time;
+
+      allow delete: if isAdmin();
+    }
+  }
+}
