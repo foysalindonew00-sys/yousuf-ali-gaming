@@ -97,9 +97,12 @@ test("buyers cannot read another buyer's order or update/delete their own order"
   await assertSucceeds(setDoc(doc(otherDb, "orders", "other-order"), order({ customerUid: OTHER_UID })));
 
   const db = buyerDb();
+  await assertSucceeds(setDoc(doc(db, "orders", "own-order"), order()));
   await assertFails(getDoc(doc(db, "orders", "other-order")));
   await assertFails(updateDoc(doc(db, "orders", "other-order"), { status: "Completed" }));
   await assertFails(deleteDoc(doc(db, "orders", "other-order")));
+  await assertFails(updateDoc(doc(db, "orders", "own-order"), { status: "Completed" }));
+  await assertFails(deleteDoc(doc(db, "orders", "own-order")));
 });
 
 test("admin can read all orders and update/delete order records", async () => {
