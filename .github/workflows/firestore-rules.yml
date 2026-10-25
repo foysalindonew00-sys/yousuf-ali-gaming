@@ -20,6 +20,6 @@ jobs:
         with:
           node-version: 20
       - name: Install test dependencies
-        run: npm install
+        run: npm install --prefix tests
       - name: Test Firestore rules in emulator
-        run: npx firebase-tools emulators:exec --only firestore --project demo-yousuf-ali-gaming "npm run test:rules"
+        run: ./tests/node_modules/.bin/firebase emulators:exec --only firestore --project demo-yousuf-ali-gaming "npm --prefix tests run test:rules"
